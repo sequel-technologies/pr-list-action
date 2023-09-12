@@ -11,10 +11,10 @@ inputs:
   repo:
     description: 'The repo to check'
     required: true
-  source-branch:
+  head:
     description: 'The source branch to compare'
     required: true
-  target-branch:
+  base:
     description: 'The target branch to compare'
     required: true
 outputs:
