@@ -1,5 +1,5 @@
 {
-  "name": "pr-list-action",
+  "name": "add-merged-pr-list",
   "version": "1.0.0",
   "description": "A GitHub action to add a list of merged Pull Requests in a branch to a Pull Request",
   "main": "src/index.js",
