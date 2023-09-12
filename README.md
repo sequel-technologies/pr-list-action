@@ -1,4 +1,5 @@
 # pr-list-action
+
 A GitHub action to add a list of merged Pull Requests in a branch to a Pull Request
 
 ## Action
@@ -28,10 +29,5 @@ jobs:
 
 1. Install `vercel/ncc` by running this command in your terminal
     ```shell
-    npm i -g @vercel/ncc
-    ```
-
-1. Compile the index.js file
-    ```shell
-    ncc build src/index.js --license licenses.txt
+    npm run prepare
     ```

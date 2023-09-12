@@ -434,9 +434,6 @@ Apache-2.0
    limitations under the License.
 
 
-codes
-ISC
-
 deprecation
 ISC
 The ISC License
