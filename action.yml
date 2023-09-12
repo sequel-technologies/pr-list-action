@@ -1,5 +1,5 @@
 name: 'Add Merged PR List'
-description: 'Creates a list of merged PRs in the source branch that aren't in the target branch'
+description: 'Creates a list of merged PRs in the source branch that are not in the target branch'
 inputs:
   github-token:
     description: Secret GitHub API token to use for making API requests
