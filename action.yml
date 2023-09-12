@@ -1,4 +1,4 @@
-name: 'PR List'
+name: 'Add Merged PR List'
 description: 'Creates a list of merged PRs in the source branch that aren't in the target branch'
 inputs:
   github-token:
