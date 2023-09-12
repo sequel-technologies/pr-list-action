@@ -9816,46 +9816,39 @@ const main = async () => {
     const token = core.getInput("github-token", { required: true });
     const owner = core.getInput("owner", { required: true });
     const repo = core.getInput("repo", { required: true });
-    const sourceBranch = core.getInput("source-branch", { required: true });
-    const targetBranch = core.getInput("target-branch", { required: true });
+    const head = core.getInput("head", { required: true });
+    const base = core.getInput("base", { required: true });
 
     const octokit = new github.getOctokit(token);
 
-    const sourceCommitsResponse = await octokit.rest.repos.listCommits({
+    const { data: comparison } = await octokit.rest.repos.compareCommits({
       owner,
       repo,
-      sha: sourceBranch,
-      per_page: 100, // Adjust as needed
+      base,
+      head,
     });
 
-    const targetCommitsResponse = await octokit.rest.repos.listCommits({
-      owner,
-      repo,
-      sha: targetBranch,
-      per_page: 100, // Adjust as needed
-    });
+    const uniqueCommits = comparison.commits.map(commit => commit.sha);
 
-    const sourceCommits = new Set(sourceCommitsResponse.data.map(commit => commit.sha));
-    const targetCommits = new Set(targetCommitsResponse.data.map(commit => commit.sha));
-
-    const uniqueCommits = [...sourceCommits].filter(commit => !targetCommits.has(commit));
-
-    const pullRequests = [];
-    for (const commitSha of uniqueCommits) {
-      try {
-        const pr = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
-          owner,
-          repo,
-          commit_sha: commitSha,
-        });
-
-        if (pr.data.length > 0) {
-          pullRequests.push(pr.data[0]); // Assuming each commit is associated with at most one pull request
-        }
-      } catch (error) {
+    const pullRequestsPromises = uniqueCommits.map(commitSha =>
+      octokit.rest.repos.listPullRequestsAssociatedWithCommit({
+        owner,
+        repo,
+        commit_sha: commitSha,
+      }).catch(error => {
         console.error(`Error fetching PR for commit ${commitSha}:`, error.message);
+        return null;
+      })
+    );
+
+    const pullRequestsResponses = await Promise.all(pullRequestsPromises);
+
+    const pullRequests = pullRequestsResponses.reduce((acc, response) => {
+      if (response && response.data.length > 0) {
+        acc.push(response.data[0]); // Assuming each commit is associated with at most one pull request
       }
-    }
+      return acc;
+    }, []);
 
     core.setOutput("pull-requests", JSON.stringify(pullRequests));
   } catch (error) {
