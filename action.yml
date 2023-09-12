@@ -1,0 +1,28 @@
+name: 'PR List'
+description: 'Creates a list of merged PRs in the source branch that aren't in the target branch'
+inputs:
+  github-token:
+    description: Secret GitHub API token to use for making API requests
+    default: ${{ github.token }}
+    required: true
+  owner:
+    description: 'The owner of the repo'
+    required: true
+  repo:
+    description: 'The repo to check'
+    required: true
+  source-branch:
+    description: 'The source branch to compare'
+    required: true
+  target-branch:
+    description: 'The target branch to compare'
+    required: true
+outputs:
+  pull-request-body:
+    description: Markdown with PR List
+runs:
+  using: node16
+  main: dist/index.js
+branding:
+  icon: git-pull-request
+  color: green
