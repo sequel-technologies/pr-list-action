@@ -1,5 +1,11 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
+const Bottleneck = require("bottleneck"); // Assuming Bottleneck is installed as a dependency
+
+const limiter = new Bottleneck({
+  minTime: 1000, // Minimum time between API requests (adjust as needed)
+  maxConcurrent: 5, // Maximum number of concurrent API requests (adjust as needed)
+});
 
 const main = async () => {
   try {
@@ -21,21 +27,21 @@ const main = async () => {
     const uniqueCommits = comparison.commits.map(commit => commit.sha);
 
     const pullRequestsPromises = uniqueCommits.map(commitSha =>
-      octokit.rest.repos.listPullRequestsAssociatedWithCommit({
+      limiter.schedule(() => octokit.rest.repos.listPullRequestsAssociatedWithCommit({
         owner,
         repo,
         commit_sha: commitSha,
       }).catch(error => {
         console.error(`Error fetching PR for commit ${commitSha}:`, error.message);
         return null;
-      })
+      }))
     );
 
     const pullRequestsResponses = await Promise.all(pullRequestsPromises);
 
     const pullRequests = pullRequestsResponses.reduce((acc, response) => {
       if (response && response.data.length > 0) {
-        acc.push(response.data[0]); // Assuming each commit is associated with at most one pull request
+        acc.push(response.data[0]);
       }
       return acc;
     }, []);
