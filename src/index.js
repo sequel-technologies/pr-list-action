@@ -13,7 +13,7 @@ const main = async () => {
 
     const { data: comparison } = await octokit.rest.repos.compareCommits({
       owner,
-      repo,
+      repo: repo.split("/")[1],
       base,
       head,
     });

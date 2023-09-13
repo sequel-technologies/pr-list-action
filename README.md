@@ -20,7 +20,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           owner: sequel-technologies
-          repo: ${{ github.repository_id }}
+          repo: ${{ github.repository }}
           head: ${{ github.head_ref }}
           base: ${{ github.base_ref }}
 ```
