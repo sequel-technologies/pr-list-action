@@ -46,6 +46,7 @@ const main = async () => {
       return acc;
     }, []);
 
+    console.log(JSON.stringify(pullRequests));
     core.setOutput("pull-requests", JSON.stringify(pullRequests));
   } catch (error) {
     console.log("error");
