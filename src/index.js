@@ -5,7 +5,7 @@ const main = async () => {
   try {
     const token = core.getInput("github-token", { required: true });
     const owner = core.getInput("owner", { required: true });
-    const repo = core.getInput("repo", { required: true });
+    const repo = core.getInput("repo", { required: true }).split("/")[1];
     const head = core.getInput("head", { required: true });
     const base = core.getInput("base", { required: true });
 
@@ -13,7 +13,7 @@ const main = async () => {
 
     const { data: comparison } = await octokit.rest.repos.compareCommits({
       owner,
-      repo: repo.split("/")[1],
+      repo,
       base,
       head,
     });
