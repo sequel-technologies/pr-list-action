@@ -14,6 +14,7 @@ const main = async () => {
     const repo = core.getInput("repo", { required: true }).split("/")[1];
     const head = core.getInput("head", { required: true });
     const base = core.getInput("base", { required: true });
+    const prNumber = core.getInput("pr-number", { required: true });
 
     const octokit = new github.getOctokit(token);
 
@@ -25,6 +26,8 @@ const main = async () => {
     });
 
     const uniqueCommits = comparison.commits.map(commit => commit.sha);
+
+    const processedPRs = new Set();
 
     const pullRequestsPromises = uniqueCommits.map(commitSha =>
       limiter.schedule(() => octokit.rest.repos.listPullRequestsAssociatedWithCommit({
@@ -41,13 +44,33 @@ const main = async () => {
 
     const pullRequests = pullRequestsResponses.reduce((acc, response) => {
       if (response && response.data.length > 0) {
-        acc.push(response.data[0]);
+        const { number, title, body } = response.data[0];
+        if (!processedPRs.has(number)) {
+          const regex = /\[.*?\]\(https:\/\/trello\.com\/c\/.*?\)/;
+          const match = body.match(regex);
+          acc.push(`#${number} ${title}` + (match ? `\r\n ${match[0]}` : ''));
+          processedPRs.add(number)
+        }
       }
       return acc;
     }, []);
 
-    console.log(JSON.stringify(pullRequests));
-    core.setOutput("pull-requests", JSON.stringify(pullRequests));
+    const { data: pullRequest } = await octokit.rest.pulls.get({
+      owner,
+      repo,
+      pull_number: prNumber,
+    });
+
+    const updatedDescription = pullRequest.body + '\r\n' + pullRequests.join('\r\n');
+
+    await octokit.rest.pulls.update({
+      owner,
+      repo,
+      pull_number: prNumber,
+      body: updatedDescription,
+    });
+
+    core.setOutput("pull-requests", pullRequests.join('\r\n'));
   } catch (error) {
     console.log("error");
     core.setFailed(error.message);
