@@ -48,7 +48,7 @@ const main = async () => {
         if (!processedPRs.has(number)) {
           const regex = /\[.*?\]\(https:\/\/trello\.com\/c\/.*?\)/;
           const match = body.match(regex);
-          acc.push(`- #${number}` + (match ? `(Issue: \r\n ${match[0]})` : ''));
+          acc.push(`- #${number}` + (match ? `(Issue: ${match[0]})` : ''));
           processedPRs.add(number)
         }
       }
@@ -61,7 +61,7 @@ const main = async () => {
       pull_number: prNumber,
     });
 
-    const updatedDescription = pullRequest.body + '\r\n' + pullRequests.join('\r\n');
+    const updatedDescription = pullRequest.body ? pullRequest.body : '' + '\r\n' + pullRequests.join('\r\n');
 
     await octokit.rest.pulls.update({
       owner,
