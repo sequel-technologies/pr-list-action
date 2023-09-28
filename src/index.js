@@ -44,11 +44,11 @@ const main = async () => {
 
     const pullRequests = pullRequestsResponses.reduce((acc, response) => {
       if (response && response.data.length > 0) {
-        const { number, title, body } = response.data[0];
+        const { number, body } = response.data[0];
         if (!processedPRs.has(number)) {
           const regex = /\[.*?\]\(https:\/\/trello\.com\/c\/.*?\)/;
           const match = body.match(regex);
-          acc.push(`#${number} ${title}` + (match ? `\r\n ${match[0]}` : ''));
+          acc.push(`- #${number}` + (match ? `(Issue: \r\n ${match[0]})` : ''));
           processedPRs.add(number)
         }
       }
