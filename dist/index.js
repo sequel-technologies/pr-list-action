@@ -12760,7 +12760,7 @@ const main = async () => {
         if (!processedPRs.has(number)) {
           const regex = /\[.*?\]\(https:\/\/trello\.com\/c\/.*?\)/;
           const match = body.match(regex);
-          acc.push(`- #${number}` + (match ? `(Issue: ${match[0]})` : ''));
+          acc.push(`- #${number}` + (match ? ` (Issue: ${match[0]})` : ''));
           processedPRs.add(number)
         }
       }

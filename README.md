@@ -23,6 +23,7 @@ jobs:
           repo: ${{ github.repository }}
           head: ${{ github.head_ref }}
           base: ${{ github.base_ref }}
+          pr-number: ${{ github.event.number }}
 ```
 
 ## Building
