@@ -72,7 +72,6 @@ const main = async () => {
 
     core.setOutput("pull-requests", pullRequests.join('\r\n'));
   } catch (error) {
-    console.log("error");
     core.setFailed(error.message);
   }
 };
