@@ -17,6 +17,9 @@ inputs:
   base:
     description: 'The target branch to compare'
     required: true
+  pr-number:
+    description: 'The number of opened pull request'
+    required: true
 outputs:
   pull-request-body:
     description: Markdown with PR List
