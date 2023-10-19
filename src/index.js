@@ -47,7 +47,7 @@ const main = async () => {
         const { number, body } = response.data[0];
         if (!processedPRs.has(number)) {
           const regex = /\[.*?\]\(https:\/\/trello\.com\/c\/.*?\)/;
-          const match = body.match(regex);
+          const match = body ? body.match(regex) : null;
           acc.push(`- #${number}` + (match ? ` (Issue: ${match[0]})` : ''));
           processedPRs.add(number)
         }
