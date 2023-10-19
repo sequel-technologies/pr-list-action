@@ -45,6 +45,7 @@ const main = async () => {
     const pullRequests = pullRequestsResponses.reduce((acc, response) => {
       if (response && response.data.length > 0) {
         const { number, body } = response.data[0];
+        core.debug(`Found PR #${number} for commit ${response.data[0].sha}`)
         if (!processedPRs.has(number)) {
           const regex = /\[.*?\]\(https:\/\/trello\.com\/c\/.*?\)/;
           const match = body ? body.match(regex) : null;
